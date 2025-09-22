@@ -32,7 +32,7 @@
             $lista_puntuacion = ["8", "5", "2" ,"8", "5", "2" ,"8", "5", "2" , "7" ];
             
             for($i=0; $i<=9; $i++){
-                echo $i;
+                //echo $i;
                 
                 echo "<tr>";
                 echo "<td>$lista_peliculas[$i]</td>";
@@ -66,12 +66,12 @@
             background-color: yellow;
         }
         td img {
-            width: 350px;   /* todas del mismo ancho */
-            height: auto;   /* se ajusta automáticamente, sin deformar */
+            width: 350px;   
+            height: auto;   
         }
         td, th {
-            text-align: center;      /* centra horizontalmente */
-            vertical-align: middle;  /* centra verticalmente */
+            text-align: center;      
+            vertical-align: middle;  
         }
 
     </style>
