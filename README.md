@@ -56,7 +56,8 @@ Some things to try:
    - Press <kbd>F5</kbd> to launch the app in the container.
    - Once the breakpoint is hit, try hovering over variables, examining locals, and more.
 1. **Running a server:**
-   - From the terminal, run `php -S 0.0.0.0:8000`
+   -php -S 0.0.0.0:8000 From the terminal, run ``php -S 0.0.0.0:8000
+`
    - Click "Open in Browser" in the notification that appears to access the web app on this new port.
       - You can view an organized table of your forwarded ports in the 'Ports' view, which can be accessed with the command **Ports: Focus on Ports View**.
       - Notice port 8000 in the 'Ports' view is labeled "Hello Remote World." In `devcontainer.json`, you can set `"portsAttributes"`, such as a label for your forwarded ports and the action to be taken when the port is autoforwarded.
