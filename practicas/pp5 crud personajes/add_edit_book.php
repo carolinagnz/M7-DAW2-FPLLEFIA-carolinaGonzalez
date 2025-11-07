@@ -12,7 +12,7 @@
     <header class="bg-light py-3 mb-4 shadow-sm">
         <div class="container d-flex align-items-center justify-content-between">
             <div>
-                <h4 class="m-0">👋 Bienvenido, NOMBRE DE USUARIO</h4>
+                <h4 class="m-0">Bienvenido, NOMBRE DE USUARIO</h4>
                 <p class="text-muted m-0"><i class="fas fa-user-shield text-success"></i> ROL ADMIN O ROL LECTOR???</p>
             </div>
             <a href="home.php" class="btn btn-secondary btn-sm">

@@ -15,7 +15,7 @@
 
 // Definimos el array principal llamado $productos.
 // En PHP, los arrays pueden ser de tipo “asociativo”: en lugar de usar índices numéricos,
-// usamos claves con nombres descriptivos ('nombre', 'precio', etc.).
+// usamos claves con nombres descriptivos ('nombre', 'precio').
 $productos = [
 
     // ---------------------------------------------------------

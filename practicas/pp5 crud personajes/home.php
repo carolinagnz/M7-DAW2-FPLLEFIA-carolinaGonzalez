@@ -85,29 +85,4 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>
-home.php
-Mostrando add_edit_book.php.
-Pràctica 5. Biblioteca virtual
-Albert Arrebola Sans
-•
-24 oct (Última modificación: 24 oct)
-100 puntos
 
-Pràctica 5. Biblioteca virtual
-Documentos de Google
-
-home.php
-PHP
-
-delete_book.php
-PHP
-
-login.php
-PHP
-
-style.css
-CSS
-
-add_edit_book.php
-HTML
-Comentarios de la clase
