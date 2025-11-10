@@ -76,6 +76,22 @@ if(!isset($_SESSION['personajes'])){
 //FUNCION PARA AÑADIR PERSONAJE
 
 function agregarPersonaje($nombre, $img, $poder, $descripcion){
-    
+    function agregarPersonaje($nombre, $descripcion, $imagen) {
+    // Verificar si la sesión de personajes existe; si no, crearla
+    if (!isset($_SESSION['personajes'])) {
+        $_SESSION['personajes'] = [];
+    }
+
+    // Crear el nuevo personaje como un array asociativo
+    $nuevoPersonaje = [
+        'nombre' => $nombre,
+        'descripcion' => $descripcion,
+        'imagen' => $imagen
+    ];
+
+    // Agregar el nuevo personaje al final del array
+    $_SESSION['personajes'][] = $nuevoPersonaje;
+}
+
     
 }
