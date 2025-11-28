@@ -7,7 +7,7 @@
 define('DB_HOST', 'mysql-carolinagnz.alwaysdata.net');
 define('DB_NAME', 'carolinagnz_techsolutions_db');
 define('DB_USER', 'carolinagnz');  // Tu usuario de Alwaysdata
-define('DB_PASS', 'TU_CONTRASEÑA_AQUÍ');  // ← PON TU CONTRASEÑA REAL
+define('DB_PASS', 'Odin2021!');  // ← PON TU CONTRASEÑA REAL
 define('DB_CHARSET', 'utf8mb4');
 
 function getDBConnection() {
