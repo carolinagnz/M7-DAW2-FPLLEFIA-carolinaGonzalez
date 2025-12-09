@@ -1,0 +1,237 @@
+<?php
+/**
+ * ========================================
+ * ARCHIVO: admin/addUser.php
+ * PROYECTO: TechSolutions Pro
+ * ========================================
+ * Añadir nuevo usuario
+ */
+
+require_once '../includes/config.php';
+require_once '../includes/functions.php';
+
+iniciar_sesion_segura();
+requerir_login();
+requerir_admin();
+
+$page_title = "Nuevo Usuario - Admin - " . SITE_NAME;
+
+$error = '';
+$success = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $mysqli = getDBConnection();
+    
+    $nombre = limpiar_input($_POST['nombre']);
+    $apellidos = limpiar_input($_POST['apellidos']);
+    $email = limpiar_input($_POST['email']);
+    $password = $_POST['password'];
+    $role = limpiar_input($_POST['role']);
+    $age = (int) $_POST['age'];
+    $job = limpiar_input($_POST['job']);
+    $activo = isset($_POST['activo']) ? 1 : 0;
+    
+    // Validaciones
+    if (!validar_email($email)) {
+        $error = "El email no es válido";
+    } elseif (strlen($password) < 6) {
+        $error = "La contraseña debe tener al menos 6 caracteres";
+    } else {
+        // Verificar email único
+        $email_escapado = $mysqli->real_escape_string($email);
+        $result = $mysqli->query("SELECT id FROM users WHERE email = '$email_escapado' LIMIT 1");
+        
+        if ($result->num_rows > 0) {
+            $error = "Este email ya está registrado";
+        } else {
+            // Gestionar avatar
+            $avatar_path = 'uploads/avatars/default-avatar.jpg';
+            
+            if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] === UPLOAD_ERR_OK) {
+                $resultado = subir_avatar($_FILES['avatar']);
+                if ($resultado['success']) {
+                    $avatar_path = $resultado['path'];
+                } else {
+                    $error = $resultado['message'];
+                }
+            }
+            
+            if (empty($error)) {
+                $password_hash = password_hash($password, PASSWORD_DEFAULT);
+                
+                $stmt = $mysqli->prepare(
+                    "INSERT INTO users (nombre, apellidos, email, password, foto, role, age, job, activo, date_register) 
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())"
+                );
+                
+                if ($stmt) {
+                    $stmt->bind_param("ssssssisi", $nombre, $apellidos, $email, $password_hash, $avatar_path, $role, $age, $job, $activo);
+                    
+                    if ($stmt->execute()) {
+                        header("Location: usuarios.php?success=added");
+                        exit();
+                    } else {
+                        $error = "Error al crear usuario: " . $stmt->error;
+                    }
+                    
+                    $stmt->close();
+                }
+            }
+        }
+    }
+    
+    $mysqli->close();
+}
+
+include '../includes/header.php';
+?>
+
+<!-- PAGE TITLE -->
+<section class="page-title bg-cover" style="background: linear-gradient(135deg, #2C3E50 0%, #34495e 100%); padding: 60px 0;">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="text-white font-weight-bold">
+                    <i class="ti-user"></i> Nuevo Usuario
+                </h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb bg-transparent p-0 m-0">
+                        <li class="breadcrumb-item"><a href="index.php" class="text-white-50">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="usuarios.php" class="text-white-50">Usuarios</a></li>
+                        <li class="breadcrumb-item active text-white" aria-current="page">Nuevo</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FORMULARIO -->
+<section class="section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow rounded">
+                    <div class="card-body p-5">
+                        
+                        <?php if ($error): ?>
+                            <div class="alert alert-danger alert-dismissible fade show">
+                                <i class="ti-alert"></i> <?php echo htmlspecialchars($error); ?>
+                                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                            </div>
+                        <?php endif; ?>
+
+                        <form method="POST" enctype="multipart/form-data">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label><i class="ti-user"></i> Nombre *</label>
+                                        <input type="text" name="nombre" class="form-control" required
+                                               value="<?php echo isset($_POST['nombre']) ? htmlspecialchars($_POST['nombre']) : ''; ?>">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label><i class="ti-id-badge"></i> Apellidos *</label>
+                                        <input type="text" name="apellidos" class="form-control" required
+                                               value="<?php echo isset($_POST['apellidos']) ? htmlspecialchars($_POST['apellidos']) : ''; ?>">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label><i class="ti-email"></i> Email *</label>
+                                        <input type="email" name="email" class="form-control" required
+                                               value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label><i class="ti-lock"></i> Contraseña * (mín. 6 caracteres)</label>
+                                        <input type="password" name="password" class="form-control" minlength="6" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label><i class="ti-shield"></i> Rol *</label>
+                                        <select name="role" class="form-control" required>
+                                            <option value="user" <?php echo (isset($_POST['role']) && $_POST['role'] == 'user') ? 'selected' : ''; ?>>
+                                                Usuario
+                                            </option>
+                                            <option value="admin" <?php echo (isset($_POST['role']) && $_POST['role'] == 'admin') ? 'selected' : ''; ?>>
+                                                Administrador
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label><i class="ti-calendar"></i> Edad *</label>
+                                        <input type="number" name="age" class="form-control" min="15" max="100" required
+                                               value="<?php echo isset($_POST['age']) ? htmlspecialchars($_POST['age']) : ''; ?>">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label><i class="ti-briefcase"></i> Profesión</label>
+                                        <input type="text" name="job" class="form-control"
+                                               value="<?php echo isset($_POST['job']) ? htmlspecialchars($_POST['job']) : ''; ?>">
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label><i class="ti-image"></i> Foto de perfil</label>
+                                        <div class="custom-file">
+                                            <input type="file" name="avatar" class="custom-file-input" id="avatar" accept="image/*">
+                                            <label class="custom-file-label" for="avatar">Elegir archivo...</label>
+                                        </div>
+                                        <small class="form-text text-muted">Opcional. JPG, PNG, GIF (máx 5MB)</small>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="activo" name="activo" 
+                                                   <?php echo (!isset($_POST['activo']) || isset($_POST['activo'])) ? 'checked' : ''; ?>>
+                                            <label class="custom-control-label" for="activo">
+                                                Usuario activo
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <div class="text-right">
+                                <a href="usuarios.php" class="btn btn-secondary">
+                                    <i class="ti-arrow-left"></i> Cancelar
+                                </a>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="ti-check"></i> Crear Usuario
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+document.querySelector('.custom-file-input').addEventListener('change', function(e) {
+    var fileName = e.target.files[0].name;
+    var label = e.target.nextElementSibling;
+    label.textContent = fileName;
+});
+</script>
+
+<?php include '../includes/footer.php'; ?>
